@@ -1,0 +1,123 @@
+# ==========================================
+# 🌱 ROOT .GITIGNORE
+# For Full Stack Project:
+# Spring Boot (Backend) + React Vite (Frontend)
+# + Docker + IntelliJ IDEA
+# ==========================================
+
+# ==========================================
+# 🧠 General
+# ==========================================
+*.log
+*.tmp
+*.bak
+*.swp
+*.swo
+*.seed
+.DS_Store
+Thumbs.db
+
+# ==========================================
+# 🧩 BACKEND (Spring Boot / Maven)
+# ==========================================
+HELP.md
+
+# Maven build artifacts
+/backend/target/
+target/
+.mvn/
+.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+
+# Gradle (if used)
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.properties
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Spring Boot configuration files (local use)
+application.properties
+application.yml
+/config/application-*.yml
+
+# ==========================================
+# 🧠 IDE / Editors
+# ==========================================
+
+### IntelliJ IDEA ###
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+### Eclipse / STS ###
+.apt_generated/
+.classpath
+.factorypath
+.project
+.settings/
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+### VS Code ###
+.vscode/
+.history/
+
+# ==========================================
+# ⚛️ FRONTEND (React + Vite)
+# ==========================================
+
+# Dependency directories
+/frontend/node_modules/
+
+# Build output
+/frontend/dist/
+/frontend/build/
+
+# Local environment files
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development.local
+/frontend/.env.production.local
+/frontend/.env.test.local
+
+# Editor cache
+/frontend/.eslintcache
+
+# ==========================================
+# 🐳 DOCKER
+# ==========================================
+/docker-data/
+docker-compose.override.yml
+.env
+*.pid
+
+# ==========================================
+# 📦 Misc / Compiled
+# ==========================================
+*.jar
+*.war
+*.class
+*.db
+*.sqlite
+*.h2.db
+
+# ==========================================
+# 💻 OS / System
+# ==========================================
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
