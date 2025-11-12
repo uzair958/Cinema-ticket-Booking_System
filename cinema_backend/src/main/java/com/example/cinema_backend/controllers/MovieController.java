@@ -20,12 +20,12 @@ public class MovieController {
         return ResponseEntity.ok(movieService.addMovie(movie));
     }
 
-    @GetMapping("/all")
+    @GetMapping("/public/all")
     public ResponseEntity<List<Movie>> getAllMovies() {
         return ResponseEntity.ok(movieService.getAllMovies());
     }
 
-    @GetMapping("/search")
+    @GetMapping("/public/search")
     public ResponseEntity<List<Movie>> searchMovies(@RequestParam String title) {
         return ResponseEntity.ok(movieService.searchByTitle(title));
     }

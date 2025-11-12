@@ -20,7 +20,7 @@ public class SeatService {
     public Seat updateSeatAvailability(Long seatId, boolean available) {
         Seat seat = seatRepository.findById(seatId)
                 .orElseThrow(() -> new RuntimeException("Seat not found"));
-        seat.setIsAvailable(available);
+        seat.setAvailable(available);
         return seatRepository.save(seat);
     }
 }
