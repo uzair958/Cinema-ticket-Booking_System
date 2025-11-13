@@ -7,13 +7,17 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import MovieList from './pages/MovieList';
 import AddMovie from './pages/AddMovie';
+import EditMovie from './pages/EditMovie';
 import HallList from './pages/HallList';
 import AddHall from './pages/AddHall';
+import EditHall from './pages/EditHall';
 import ShowtimeList from './pages/ShowtimeList';
 import ShowtimesByMovie from './pages/ShowtimesByMovie';
 import AddShowtime from './pages/AddShowtime';
+import EditShowtime from './pages/EditShowtime';
 import BookingForm from './pages/BookingForm';
 import UserBookings from './pages/UserBookings';
+import UserManagement from './pages/UserManagement';
 
 import './App.css';
 
@@ -52,7 +56,7 @@ const Navigation: React.FC = () => {
             <>
               <li className="nav-item">
                 <Link to="/my-bookings" className="nav-link">
-                  My Bookings
+                  {user?.role === 'ADMIN' ? 'All Bookings' : 'My Bookings'}
                 </Link>
               </li>
               {user?.role === 'ADMIN' && (
@@ -70,6 +74,11 @@ const Navigation: React.FC = () => {
                   <li className="nav-item">
                     <Link to="/add-showtime" className="nav-link">
                       Add Showtime
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link to="/users" className="nav-link">
+                      👥 Users
                     </Link>
                   </li>
                 </>
@@ -115,19 +124,25 @@ const App: React.FC = () => {
           <Route path="/" element={<MovieList />} />
           <Route path="/movies" element={<MovieList />} />
           <Route path="/add-movie" element={<AddMovie />} />
+          <Route path="/edit-movie/:movieId" element={<EditMovie />} />
 
           {/* Hall Routes */}
           <Route path="/halls" element={<HallList />} />
           <Route path="/add-hall" element={<AddHall />} />
+          <Route path="/edit-hall/:hallId" element={<EditHall />} />
 
           {/* Showtime Routes */}
           <Route path="/showtimes" element={<ShowtimeList />} />
           <Route path="/showtimes/:movieId" element={<ShowtimesByMovie />} />
           <Route path="/add-showtime" element={<AddShowtime />} />
+          <Route path="/edit-showtime/:showtimeId" element={<EditShowtime />} />
 
           {/* Booking Routes */}
           <Route path="/booking/:showtimeId" element={<BookingForm />} />
           <Route path="/my-bookings" element={<UserBookings />} />
+
+          {/* Admin Routes */}
+          <Route path="/users" element={<UserManagement />} />
         </Routes>
       </main>
     </Router>

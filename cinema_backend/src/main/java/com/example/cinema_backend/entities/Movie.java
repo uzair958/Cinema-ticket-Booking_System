@@ -2,6 +2,7 @@ package com.example.cinema_backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -27,5 +28,6 @@ public class Movie {
     private LocalDate releaseDate;
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Showtime> showtimes;
 }

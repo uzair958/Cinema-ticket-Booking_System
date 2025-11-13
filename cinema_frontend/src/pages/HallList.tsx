@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Hall, Seat } from '../types';
 import { hallService } from '../services/api';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+import SuccessMessage from '../components/SuccessMessage';
 import '../styles/HallList.css';
+import { useAuth } from '../context/AuthContext';
 
 const HallList: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [halls, setHalls] = useState<Hall[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [selectedHallId, setSelectedHallId] = useState<number | null>(null);
   const [hallSeats, setHallSeats] = useState<Seat[]>([]);
   const [seatsLoading, setSeatsLoading] = useState(false);
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     fetchHalls();
@@ -21,11 +27,24 @@ const HallList: React.FC = () => {
   const fetchHalls = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Fetching halls...');
       const data = await hallService.getAllHalls();
-      setHalls(data);
-      setError('');
+      console.log('✅ Halls fetched:', data);
+
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setHalls(data);
+        setError('');
+      } else {
+        console.error('❌ Invalid halls data:', data);
+        setError('Invalid response format from server');
+        setHalls([]);
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to fetch halls');
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch halls';
+      console.error('❌ Fetch halls error:', errorMsg);
+      setError(errorMsg);
+      setHalls([]);
     } finally {
       setLoading(false);
     }
@@ -44,6 +63,36 @@ const HallList: React.FC = () => {
     }
   };
 
+  const handleDeleteHall = async (hallId: number) => {
+    if (!window.confirm('Are you sure you want to delete this hall? This action cannot be undone.')) {
+      return;
+    }
+
+    try {
+      setDeleting(hallId);
+      console.log('🗑️ Deleting hall:', hallId);
+      await hallService.deleteHall(hallId);
+      setSuccess('Hall deleted successfully!');
+      setError('');
+
+      // Refresh the halls list
+      setTimeout(() => {
+        fetchHalls();
+        setSuccess('');
+      }, 2000);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to delete hall';
+      console.error('❌ Delete hall error:', errorMsg);
+      setError(errorMsg);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleEditHall = (hallId: number) => {
+    navigate(`/edit-hall/${hallId}`);
+  };
+
   if (loading) {
     return <LoadingSpinner message="Loading halls..." />;
   }
@@ -53,6 +102,7 @@ const HallList: React.FC = () => {
       <h1>Cinema Halls</h1>
 
       {error && <ErrorMessage message={error} onClose={() => setError('')} />}
+      {success && <SuccessMessage message={success} />}
 
       {halls.length === 0 ? (
         <p className="no-data">No halls available</p>
@@ -68,6 +118,24 @@ const HallList: React.FC = () => {
               >
                 View Seats
               </button>
+
+              {user?.role === 'ADMIN' && (
+                <div className="admin-actions">
+                  <button
+                    className="btn-secondary"
+                    onClick={() => handleEditHall(hall.id!)}
+                  >
+                    ✏️ Edit
+                  </button>
+                  <button
+                    className="btn-danger"
+                    onClick={() => handleDeleteHall(hall.id!)}
+                    disabled={deleting === hall.id}
+                  >
+                    {deleting === hall.id ? '🗑️ Deleting...' : '🗑️ Delete'}
+                  </button>
+                </div>
+              )}
             </div>
           ))}
         </div>

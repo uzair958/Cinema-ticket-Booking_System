@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Seat, Showtime } from '../types';
-import { seatService, bookingService } from '../services/api';
+import { Seat, Showtime, User } from '../types';
+import { seatService, bookingService, showtimeService, userService } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
@@ -13,6 +13,7 @@ const BookingForm: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
 
+  const [showtime, setShowtime] = useState<Showtime | null>(null);
   const [seats, setSeats] = useState<Seat[]>([]);
   const [selectedSeat, setSelectedSeat] = useState<Seat | null>(null);
   const [price, setPrice] = useState(0);
@@ -20,6 +21,9 @@ const BookingForm: React.FC = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [allUsers, setAllUsers] = useState<User[]>([]);
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null);
+  const [userSearchEmail, setUserSearchEmail] = useState('');
 
   useEffect(() => {
     if (!user) {
@@ -27,16 +31,48 @@ const BookingForm: React.FC = () => {
       return;
     }
     fetchSeats();
+
+    // If admin, fetch all users
+    if (user.role === 'ADMIN') {
+      fetchAllUsers();
+    } else {
+      // If regular user, set their ID as selected
+      setSelectedUserId(user.id);
+    }
   }, [showtimeId, user, navigate]);
+
+  const fetchAllUsers = async () => {
+    try {
+      console.log('👥 Fetching all users for admin booking');
+      const users = await userService.getAllUsers();
+      console.log('✅ Users fetched:', users);
+      setAllUsers(users);
+    } catch (err) {
+      console.error('❌ Failed to fetch users:', err);
+      // Don't show error, just continue without user selection
+    }
+  };
 
   const fetchSeats = async () => {
     try {
       setLoading(true);
-      // Note: We need hallId from showtime, but it's not directly available
-      // This is a limitation - we'll need to fetch showtime details first
-      // For now, we'll assume hallId is passed or available
-      // In a real scenario, you'd fetch the showtime first to get hallId
       setError('');
+
+      // Step 1: Fetch showtime details to get hallId
+      console.log('🔄 Fetching showtime details for ID:', showtimeId);
+      const showtimeData = await showtimeService.getShowtimeById(parseInt(showtimeId!));
+      console.log('✅ Showtime fetched:', showtimeData);
+      setShowtime(showtimeData);
+
+      // Step 2: Fetch seats for the hall
+      if (showtimeData.hall && showtimeData.hall.id) {
+        console.log('🔄 Fetching seats for hall ID:', showtimeData.hall.id);
+        const seatsData = await seatService.getAvailableSeats(showtimeData.hall.id);
+        console.log('✅ Seats fetched:', seatsData);
+        setSeats(seatsData);
+      } else {
+        throw new Error('Hall information not available in showtime');
+      }
     } catch (err) {
       let errorMessage = 'Failed to fetch seats';
 
@@ -71,8 +107,13 @@ const BookingForm: React.FC = () => {
     setError('');
     setSuccess('');
 
-    if (!selectedSeat || !user?.id) {
+    if (!selectedSeat) {
       setError('Please select a seat');
+      return;
+    }
+
+    if (!selectedUserId) {
+      setError('Please select a user');
       return;
     }
 
@@ -85,7 +126,7 @@ const BookingForm: React.FC = () => {
 
     try {
       await bookingService.bookSeat({
-        userId: user.id,
+        userId: selectedUserId,
         showtimeId: parseInt(showtimeId!),
         seatNumber: selectedSeat.seatNumber,
         price,
@@ -131,6 +172,14 @@ const BookingForm: React.FC = () => {
       <div className="booking-card">
         <h1>Book Your Ticket</h1>
 
+        {showtime && (
+          <div className="showtime-info">
+            <p><strong>Movie:</strong> {showtime.movie?.title || 'N/A'}</p>
+            <p><strong>Hall:</strong> {showtime.hall?.name || 'N/A'}</p>
+            <p><strong>Time:</strong> {new Date(showtime.startTime).toLocaleString()}</p>
+          </div>
+        )}
+
         {error && (
           <ErrorMessage
             message={error}
@@ -142,6 +191,41 @@ const BookingForm: React.FC = () => {
         {success && <SuccessMessage message={success} />}
 
         <form onSubmit={handleSubmit}>
+          {user?.role === 'ADMIN' && (
+            <div className="form-group">
+              <label htmlFor="user-select">Book for User (Email)</label>
+              <div className="user-selector">
+                <input
+                  type="text"
+                  placeholder="Search by email..."
+                  value={userSearchEmail}
+                  onChange={(e) => setUserSearchEmail(e.target.value)}
+                  className="user-search-input"
+                />
+                <select
+                  id="user-select"
+                  value={selectedUserId || ''}
+                  onChange={(e) => setSelectedUserId(e.target.value ? parseInt(e.target.value) : null)}
+                  required
+                >
+                  <option value="">-- Select a User --</option>
+                  {allUsers
+                    .filter((u) => userSearchEmail === '' || u.email.toLowerCase().includes(userSearchEmail.toLowerCase()))
+                    .map((u) => (
+                      <option key={u.id} value={u.id}>
+                        {u.email} ({u.name || 'No name'})
+                      </option>
+                    ))}
+                </select>
+              </div>
+              {selectedUserId && (
+                <p className="selected-user-info">
+                  ✓ Booking for: <strong>{allUsers.find((u) => u.id === selectedUserId)?.email}</strong>
+                </p>
+              )}
+            </div>
+          )}
+
           <div className="form-group">
             <label>Select a Seat</label>
             <div className="seats-selection">

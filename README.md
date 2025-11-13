@@ -127,9 +127,13 @@ Open browser: **http://localhost:5173**
 
 ### Admin Features
 - ✅ Add/Edit/Delete Movies
-- ✅ Create Cinema Halls
-- ✅ Schedule Showtimes
+- ✅ Add/Edit/Delete Cinema Halls
+- ✅ Schedule/Edit/Delete Showtimes
 - ✅ View All Bookings
+- ✅ Edit Booking Prices
+- ✅ Delete Bookings
+- ✅ Manage Users (View, Change Role, Delete)
+- ✅ Book Tickets for Other Users
 
 ### Security Features
 - ✅ JWT Authentication
@@ -149,25 +153,42 @@ Open browser: **http://localhost:5173**
 ### Movies
 - `GET /api/movies/public/all` - Get all movies
 - `POST /api/movies/add` - Add movie (Admin)
+- `PUT /api/movies/{id}` - Update movie (Admin)
 - `DELETE /api/movies/{id}` - Delete movie (Admin)
 
 ### Halls
 - `GET /api/halls/all` - Get all halls
+- `GET /api/halls/{id}` - Get hall by ID
 - `GET /api/halls/{id}/seats` - Get hall seats
 - `POST /api/halls/add` - Add hall (Admin)
+- `PUT /api/halls/{id}` - Update hall (Admin)
+- `DELETE /api/halls/{id}` - Delete hall (Admin)
 
 ### Showtimes
 - `GET /api/showtimes/upcoming` - Get upcoming showtimes
+- `GET /api/showtimes/{id}` - Get showtime by ID
 - `GET /api/showtimes/movie/{movieId}` - Get showtimes by movie
 - `POST /api/showtimes/add` - Add showtime (Admin)
+- `PUT /api/showtimes/{id}` - Update showtime (Admin)
+- `DELETE /api/showtimes/{id}` - Delete showtime (Admin)
 
 ### Bookings
 - `POST /api/bookings/book` - Book ticket (Authenticated)
 - `GET /api/bookings/user/{userId}` - Get user bookings (Authenticated)
+- `GET /api/bookings/all` - Get all bookings (Admin)
+- `PUT /api/bookings/{id}/price` - Update booking price (Admin)
+- `DELETE /api/bookings/{id}` - Delete booking (Admin)
 
 ### Seats
 - `GET /api/seats/available/{showtimeId}` - Get available seats
 - `PUT /api/seats/{id}/availability` - Update seat availability
+
+### Users
+- `GET /api/users/all` - Get all users (Admin)
+- `GET /api/users/{id}` - Get user by ID (Admin)
+- `GET /api/users/email/{email}` - Get user by email (Admin)
+- `PUT /api/users/{id}/role` - Update user role (Admin)
+- `DELETE /api/users/{id}` - Delete user (Admin)
 
 ---
 

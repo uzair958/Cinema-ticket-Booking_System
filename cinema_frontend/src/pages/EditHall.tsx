@@ -1,21 +1,49 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { AddHallRequest } from '../types';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { Hall, AddHallRequest } from '../types';
 import { hallService } from '../services/api';
 import ErrorMessage from '../components/ErrorMessage';
 import SuccessMessage from '../components/SuccessMessage';
 import LoadingSpinner from '../components/LoadingSpinner';
 import '../styles/Form.css';
 
-const AddHall: React.FC = () => {
+const EditHall: React.FC = () => {
+  const { hallId } = useParams<{ hallId: string }>();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState<AddHallRequest>({
     name: '',
     totalSeats: 0,
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (hallId) {
+      fetchHall();
+    }
+  }, [hallId]);
+
+  const fetchHall = async () => {
+    try {
+      setLoading(true);
+      console.log('🔄 Fetching hall:', hallId);
+      const hall = await hallService.getHallById(parseInt(hallId!));
+      console.log('✅ Hall fetched:', hall);
+      setFormData({
+        name: hall.name,
+        totalSeats: hall.totalSeats,
+      });
+      setError('');
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to fetch hall';
+      console.error('❌ Fetch hall error:', errorMsg);
+      setError(errorMsg);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -29,27 +57,27 @@ const AddHall: React.FC = () => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    setLoading(true);
+    setSubmitting(true);
 
     try {
       if (!formData.name || !formData.totalSeats) {
         setError('Please fill in all fields');
-        setLoading(false);
+        setSubmitting(false);
         return;
       }
 
       if (formData.totalSeats < 1) {
         setError('Total seats must be at least 1');
-        setLoading(false);
+        setSubmitting(false);
         return;
       }
 
-      console.log('📤 Submitting hall form:', formData);
-      await hallService.addHall(formData);
-      setSuccess('Hall added successfully!');
+      console.log('📤 Updating hall:', hallId, formData);
+      await hallService.updateHall(parseInt(hallId!), formData);
+      setSuccess('Hall updated successfully!');
       setTimeout(() => navigate('/halls'), 2000);
     } catch (err) {
-      let errorMessage = 'Failed to add hall';
+      let errorMessage = 'Failed to update hall';
 
       if (err instanceof Error) {
         errorMessage = err.message;
@@ -59,25 +87,25 @@ const AddHall: React.FC = () => {
         } else if (errorMessage.includes('401') || errorMessage.includes('Unauthorized')) {
           errorMessage = 'Your session has expired. Please login again.';
         } else if (errorMessage.includes('403') || errorMessage.includes('Access Denied')) {
-          errorMessage = 'You do not have permission to add halls. Admin access required.';
+          errorMessage = 'You do not have permission to edit halls. Admin access required.';
         }
       }
 
-      console.error('❌ Add hall error:', err);
+      console.error('❌ Update hall error:', err);
       setError(errorMessage);
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   };
 
   if (loading) {
-    return <LoadingSpinner message="Adding hall..." />;
+    return <LoadingSpinner message="Loading hall..." />;
   }
 
   return (
     <div className="form-container">
       <div className="form-card">
-        <h1>Add New Hall</h1>
+        <h1>Edit Hall</h1>
         {error && <ErrorMessage message={error} onClose={() => setError('')} />}
         {success && <SuccessMessage message={success} />}
 
@@ -109,14 +137,24 @@ const AddHall: React.FC = () => {
             />
           </div>
 
-          <button type="submit" className="btn-primary">
-            Add Hall
-          </button>
+          <div className="form-actions">
+            <button type="submit" className="btn-primary" disabled={submitting}>
+              {submitting ? 'Updating...' : 'Update Hall'}
+            </button>
+            <button
+              type="button"
+              className="btn-secondary"
+              onClick={() => navigate('/halls')}
+              disabled={submitting}
+            >
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
     </div>
   );
 };
 
-export default AddHall;
+export default EditHall;
 

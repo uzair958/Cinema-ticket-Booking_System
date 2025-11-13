@@ -75,14 +75,18 @@ cinema_frontend/
 │   │   ├── Login.tsx                  # Login page
 │   │   ├── Register.tsx               # Registration page
 │   │   ├── MovieList.tsx              # Browse movies
-│   │   ├── BookingForm.tsx            # Seat selection & booking
+│   │   ├── BookingForm.tsx            # Seat selection & booking (with admin user selection)
 │   │   ├── UserBookings.tsx           # View bookings
 │   │   ├── AddMovie.tsx               # Admin: Add movie
+│   │   ├── EditMovie.tsx              # Admin: Edit movie
 │   │   ├── AddHall.tsx                # Admin: Add hall
+│   │   ├── EditHall.tsx               # Admin: Edit hall
 │   │   ├── AddShowtime.tsx            # Admin: Add showtime
+│   │   ├── EditShowtime.tsx           # Admin: Edit showtime
 │   │   ├── HallList.tsx               # View halls
 │   │   ├── ShowtimeList.tsx           # View showtimes
-│   │   └── ShowtimesByMovie.tsx       # Showtimes by movie
+│   │   ├── ShowtimesByMovie.tsx       # Showtimes by movie
+│   │   └── UserManagement.tsx         # Admin: Manage users
 │   ├── components/
 │   │   ├── ErrorMessage.tsx           # Error display
 │   │   ├── SuccessMessage.tsx         # Success display
@@ -195,10 +199,14 @@ npm run lint -- --fix
 - ✅ Logout
 
 ### Admin Features
-- ✅ Add Movies
-- ✅ Add Cinema Halls
-- ✅ Schedule Showtimes
+- ✅ Add/Edit/Delete Movies
+- ✅ Add/Edit/Delete Cinema Halls
+- ✅ Schedule/Edit/Delete Showtimes
 - ✅ View All Bookings
+- ✅ Edit Booking Prices
+- ✅ Delete Bookings
+- ✅ Manage Users (View, Change Role, Delete)
+- ✅ Book Tickets for Other Users
 
 ### UI/UX Features
 - ✅ Responsive Design
@@ -220,14 +228,18 @@ npm run lint -- --fix
 | Login.tsx | User login | ❌ No |
 | Register.tsx | User registration | ❌ No |
 | MovieList.tsx | Browse movies | ❌ No |
-| BookingForm.tsx | Select seats & book | ✅ Yes |
+| BookingForm.tsx | Select seats & book (with admin user selection) | ✅ Yes |
 | UserBookings.tsx | View bookings | ✅ Yes |
 | AddMovie.tsx | Add movie (Admin) | ✅ Admin |
+| EditMovie.tsx | Edit movie (Admin) | ✅ Admin |
 | AddHall.tsx | Add hall (Admin) | ✅ Admin |
+| EditHall.tsx | Edit hall (Admin) | ✅ Admin |
 | AddShowtime.tsx | Add showtime (Admin) | ✅ Admin |
+| EditShowtime.tsx | Edit showtime (Admin) | ✅ Admin |
 | HallList.tsx | View halls | ❌ No |
 | ShowtimeList.tsx | View showtimes | ❌ No |
 | ShowtimesByMovie.tsx | Showtimes by movie | ❌ No |
+| UserManagement.tsx | Manage users (Admin) | ✅ Admin |
 
 ### Components
 
@@ -258,23 +270,40 @@ authService.register(userData)
 // Movies
 movieService.getAllMovies()
 movieService.addMovie(movieData)
+movieService.updateMovie(id, movieData)
 movieService.deleteMovie(id)
 
 // Halls
 hallService.getAllHalls()
+hallService.getHallById(id)
 hallService.addHall(hallData)
+hallService.updateHall(id, hallData)
+hallService.deleteHall(id)
 
 // Showtimes
 showtimeService.getUpcomingShowtimes()
 showtimeService.getShowtimesByMovie(movieId)
+showtimeService.getShowtimeById(id)
 showtimeService.addShowtime(showtimeData)
+showtimeService.updateShowtime(id, showtimeData)
+showtimeService.deleteShowtime(id)
 
 // Bookings
-bookingService.bookTicket(bookingData)
+bookingService.bookSeat(bookingData)
 bookingService.getUserBookings(userId)
+bookingService.getAllBookings()
+bookingService.updateBookingPrice(id, price)
+bookingService.deleteBooking(id)
 
 // Seats
 seatService.getAvailableSeats(showtimeId)
+
+// Users
+userService.getAllUsers()
+userService.getUserById(id)
+userService.getUserByEmail(email)
+userService.updateUserRole(id, role)
+userService.deleteUser(id)
 ```
 
 ### Error Handling
@@ -336,18 +365,40 @@ Authorization: Bearer <jwt_token>
 
 ### Manual Testing Checklist
 
+**User Features:**
 - [ ] User can register
 - [ ] User can login
 - [ ] User can browse movies
 - [ ] User can view showtimes
 - [ ] User can select seats
 - [ ] User can book tickets
-- [ ] User can view bookings
+- [ ] User can view their bookings
+- [ ] User can logout
+
+**Admin Features:**
 - [ ] Admin can add movies
+- [ ] Admin can edit movies
+- [ ] Admin can delete movies
 - [ ] Admin can add halls
+- [ ] Admin can edit halls
+- [ ] Admin can delete halls
 - [ ] Admin can add showtimes
+- [ ] Admin can edit showtimes
+- [ ] Admin can delete showtimes
+- [ ] Admin can view all bookings
+- [ ] Admin can edit booking prices
+- [ ] Admin can delete bookings
+- [ ] Admin can view all users
+- [ ] Admin can change user roles
+- [ ] Admin can delete users
+- [ ] Admin can book tickets for other users
+
+**UI/UX Features:**
 - [ ] Error messages display correctly
+- [ ] Success messages display correctly
 - [ ] Responsive design works on mobile
+- [ ] Search functionality works in User Management
+- [ ] Background gradient displays correctly on all pages
 
 ---
 

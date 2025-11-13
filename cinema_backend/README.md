@@ -70,18 +70,20 @@ cinema_backend/
 │   │   │   │   └── JwtAuthFilter.java           # JWT filter
 │   │   │   ├── controllers/
 │   │   │   │   ├── AuthController.java          # Auth endpoints
-│   │   │   │   ├── MovieController.java         # Movie endpoints
-│   │   │   │   ├── HallController.java          # Hall endpoints
-│   │   │   │   ├── ShowtimeController.java      # Showtime endpoints
-│   │   │   │   ├── BookingController.java       # Booking endpoints
-│   │   │   │   └── SeatController.java          # Seat endpoints
+│   │   │   │   ├── MovieController.java         # Movie endpoints (CRUD)
+│   │   │   │   ├── HallController.java          # Hall endpoints (CRUD)
+│   │   │   │   ├── ShowtimeController.java      # Showtime endpoints (CRUD)
+│   │   │   │   ├── BookingController.java       # Booking endpoints (CRUD)
+│   │   │   │   ├── SeatController.java          # Seat endpoints
+│   │   │   │   └── UserController.java          # User management endpoints
 │   │   │   ├── services/
 │   │   │   │   ├── AuthService.java             # Auth logic
 │   │   │   │   ├── MovieService.java            # Movie logic
 │   │   │   │   ├── HallService.java             # Hall logic
 │   │   │   │   ├── ShowtimeService.java         # Showtime logic
 │   │   │   │   ├── BookingService.java          # Booking logic
-│   │   │   │   └── SeatService.java             # Seat logic
+│   │   │   │   ├── SeatService.java             # Seat logic
+│   │   │   │   └── UserService.java             # User management logic
 │   │   │   ├── repositories/
 │   │   │   │   ├── UserRepository.java          # User DB access
 │   │   │   │   ├── MovieRepository.java         # Movie DB access
@@ -200,6 +202,7 @@ logging.level.com.example.cinema_backend=DEBUG
 |--------|----------|-------------|------|
 | GET | `/api/movies/public/all` | Get all movies | ❌ |
 | POST | `/api/movies/add` | Add new movie | ✅ Admin |
+| PUT | `/api/movies/{id}` | Update movie | ✅ Admin |
 | DELETE | `/api/movies/{id}` | Delete movie | ✅ Admin |
 
 ### Hall Endpoints
@@ -207,16 +210,22 @@ logging.level.com.example.cinema_backend=DEBUG
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
 | GET | `/api/halls/all` | Get all halls | ❌ |
+| GET | `/api/halls/{id}` | Get hall by ID | ❌ |
 | GET | `/api/halls/{id}/seats` | Get hall seats | ❌ |
 | POST | `/api/halls/add` | Add new hall | ✅ Admin |
+| PUT | `/api/halls/{id}` | Update hall | ✅ Admin |
+| DELETE | `/api/halls/{id}` | Delete hall | ✅ Admin |
 
 ### Showtime Endpoints
 
 | Method | Endpoint | Description | Auth |
 |--------|----------|-------------|------|
 | GET | `/api/showtimes/upcoming` | Get upcoming showtimes | ❌ |
+| GET | `/api/showtimes/{id}` | Get showtime by ID | ❌ |
 | GET | `/api/showtimes/movie/{movieId}` | Get showtimes by movie | ❌ |
 | POST | `/api/showtimes/add` | Add new showtime | ✅ Admin |
+| PUT | `/api/showtimes/{id}` | Update showtime | ✅ Admin |
+| DELETE | `/api/showtimes/{id}` | Delete showtime | ✅ Admin |
 
 ### Booking Endpoints
 
@@ -224,6 +233,9 @@ logging.level.com.example.cinema_backend=DEBUG
 |--------|----------|-------------|------|
 | POST | `/api/bookings/book` | Book ticket | ✅ User |
 | GET | `/api/bookings/user/{userId}` | Get user bookings | ✅ User |
+| GET | `/api/bookings/all` | Get all bookings | ✅ Admin |
+| PUT | `/api/bookings/{id}/price` | Update booking price | ✅ Admin |
+| DELETE | `/api/bookings/{id}` | Delete booking | ✅ Admin |
 
 ### Seat Endpoints
 
@@ -231,6 +243,16 @@ logging.level.com.example.cinema_backend=DEBUG
 |--------|----------|-------------|------|
 | GET | `/api/seats/available/{showtimeId}` | Get available seats | ❌ |
 | PUT | `/api/seats/{id}/availability` | Update seat availability | ✅ User |
+
+### User Endpoints
+
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/users/all` | Get all users | ✅ Admin |
+| GET | `/api/users/{id}` | Get user by ID | ✅ Admin |
+| GET | `/api/users/email/{email}` | Get user by email | ✅ Admin |
+| PUT | `/api/users/{id}/role` | Update user role | ✅ Admin |
+| DELETE | `/api/users/{id}` | Delete user | ✅ Admin |
 
 ---
 

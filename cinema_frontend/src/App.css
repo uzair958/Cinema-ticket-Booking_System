@@ -22,12 +22,12 @@
 
 .nav-logo {
   color: white;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 700;
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   white-space: nowrap;
   flex-shrink: 0;
 }
@@ -39,11 +39,13 @@
 .nav-menu {
   display: flex;
   list-style: none;
-  gap: 25px;
+  gap: 15px;
   flex: 1;
   margin-left: 40px;
   align-items: center;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .nav-item {
@@ -56,11 +58,12 @@
 .nav-link {
   color: white;
   text-decoration: none;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   transition: opacity 0.3s;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border-radius: 4px;
+  white-space: nowrap;
 }
 
 .nav-link:hover {
@@ -71,15 +74,15 @@
 .nav-auth {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
   flex-shrink: 0;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   justify-content: flex-end;
 }
 
 .user-info {
   color: white;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   white-space: nowrap;
 }
@@ -87,10 +90,10 @@
 .btn-login,
 .btn-register,
 .btn-logout {
-  padding: 8px 14px;
+  padding: 6px 12px;
   border-radius: 4px;
   text-decoration: none;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s;

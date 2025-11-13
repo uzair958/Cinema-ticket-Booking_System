@@ -17,6 +17,7 @@ public class ShowtimeController {
 
     @PostMapping("/add")
     public ResponseEntity<Showtime> addShowtime(@RequestBody Showtime showtime) {
+        System.out.println("🎬 Adding Showtime");
         return ResponseEntity.ok(showtimeService.addShowtime(showtime));
     }
 
@@ -28,5 +29,24 @@ public class ShowtimeController {
     @GetMapping("/movie/{movieId}")
     public ResponseEntity<List<Showtime>> getShowtimesByMovie(@PathVariable Long movieId) {
         return ResponseEntity.ok(showtimeService.getShowtimesByMovie(movieId));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Showtime> getShowtimeById(@PathVariable Long id) {
+        System.out.println("🎬 Fetching showtime with ID: " + id);
+        return ResponseEntity.ok(showtimeService.getShowtimeById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Showtime> updateShowtime(@PathVariable Long id, @RequestBody Showtime showtime) {
+        System.out.println("🎬 Updating Showtime ID: " + id);
+        return ResponseEntity.ok(showtimeService.updateShowtime(id, showtime));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteShowtime(@PathVariable Long id) {
+        System.out.println("🎬 Deleting Showtime ID: " + id);
+        showtimeService.deleteShowtime(id);
+        return ResponseEntity.ok("Showtime deleted successfully");
     }
 }

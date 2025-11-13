@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Movie } from '../types';
 import { movieService } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
+import SuccessMessage from '../components/SuccessMessage';
 import '../styles/MovieList.css';
 
 const MovieList: React.FC = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [deleting, setDeleting] = useState<number | null>(null);
 
   useEffect(() => {
     fetchMovies();
@@ -19,9 +25,19 @@ const MovieList: React.FC = () => {
   const fetchMovies = async () => {
     try {
       setLoading(true);
+      console.log('🔄 Fetching movies...');
       const data = await movieService.getAllMovies();
-      setMovies(data);
-      setError('');
+      console.log('✅ Movies fetched:', data);
+
+      // Ensure data is an array
+      if (Array.isArray(data)) {
+        setMovies(data);
+        setError('');
+      } else {
+        console.error('❌ Invalid movies data:', data);
+        setError('Invalid response format from server');
+        setMovies([]);
+      }
     } catch (err) {
       let errorMessage = 'Failed to fetch movies';
 
@@ -39,7 +55,8 @@ const MovieList: React.FC = () => {
       }
 
       setError(errorMessage);
-      console.error('Fetch movies error:', err);
+      setMovies([]);
+      console.error('❌ Fetch movies error:', err);
     } finally {
       setLoading(false);
     }
@@ -80,6 +97,30 @@ const MovieList: React.FC = () => {
     }
   };
 
+  const handleDeleteMovie = async (movieId: number) => {
+    if (!window.confirm('Are you sure you want to delete this movie? This action cannot be undone.')) {
+      return;
+    }
+    try {
+      setDeleting(movieId);
+      await movieService.deleteMovie(movieId);
+      setSuccess('Movie deleted successfully!');
+      setTimeout(() => {
+        fetchMovies();
+        setSuccess('');
+      }, 2000);
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Failed to delete movie';
+      setError(errorMsg);
+    } finally {
+      setDeleting(null);
+    }
+  };
+
+  const handleEditMovie = (movieId: number) => {
+    navigate(`/edit-movie/${movieId}`);
+  };
+
   if (loading) {
     return <LoadingSpinner message="Loading movies..." />;
   }
@@ -118,6 +159,7 @@ const MovieList: React.FC = () => {
           dismissible={true}
         />
       )}
+      {success && <SuccessMessage message={success} />}
 
       {movies.length === 0 ? (
         <p className="no-data">No movies found</p>
@@ -129,9 +171,21 @@ const MovieList: React.FC = () => {
               <p><strong>Genre:</strong> {movie.genre}</p>
               <p><strong>Duration:</strong> {movie.durationMinutes} minutes</p>
               <p><strong>Release Date:</strong> {movie.releaseDate}</p>
-              <Link to={`/showtimes/${movie.id}`} className="btn-primary">
-                View Showtimes
-              </Link>
+              <div className="movie-actions">
+                <Link to={`/showtimes/${movie.id}`} className="btn-primary">
+                  View Showtimes
+                </Link>
+                {user?.role === 'ADMIN' && (
+                  <div className="admin-actions">
+                    <button className="btn-secondary" onClick={() => handleEditMovie(movie.id!)}>
+                      ✏️ Edit
+                    </button>
+                    <button className="btn-danger" onClick={() => handleDeleteMovie(movie.id!)} disabled={deleting === movie.id}>
+                      {deleting === movie.id ? '🗑️ Deleting...' : '🗑️ Delete'}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ))}
         </div>

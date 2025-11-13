@@ -2,6 +2,7 @@ package com.example.cinema_backend.entities;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 
 @Entity
@@ -22,8 +23,10 @@ public class Hall {
     private int totalSeats;
 
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Seat> seats;
 
     @OneToMany(mappedBy = "hall", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Showtime> showtimes;
 }

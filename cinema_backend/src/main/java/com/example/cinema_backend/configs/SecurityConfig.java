@@ -74,22 +74,41 @@ public class SecurityConfig {
 
                         // Public endpoints - Read operations (GET)
                         .requestMatchers("GET", "/api/movies/public/**").permitAll()
+                        .requestMatchers("GET", "/api/movies/*").permitAll()
                         .requestMatchers("GET", "/api/halls/all").permitAll()
                         .requestMatchers("GET", "/api/halls/*/seats").permitAll()
                         .requestMatchers("GET", "/api/seats/available/**").permitAll()
                         .requestMatchers("GET", "/api/showtimes/upcoming").permitAll()
                         .requestMatchers("GET", "/api/showtimes/movie/**").permitAll()
+                        .requestMatchers("GET", "/api/showtimes/*").permitAll()
 
                         // Admin endpoints - CRUD operations
                         .requestMatchers("POST", "/api/movies/add").hasRole("ADMIN")
+                        .requestMatchers("PUT", "/api/movies/**").hasRole("ADMIN")
                         .requestMatchers("DELETE", "/api/movies/**").hasRole("ADMIN")
                         .requestMatchers("POST", "/api/halls/add").hasRole("ADMIN")
+                        .requestMatchers("PUT", "/api/halls/**").hasRole("ADMIN")
+                        .requestMatchers("DELETE", "/api/halls/**").hasRole("ADMIN")
                         .requestMatchers("POST", "/api/showtimes/add").hasRole("ADMIN")
+                        .requestMatchers("PUT", "/api/showtimes/**").hasRole("ADMIN")
+                        .requestMatchers("DELETE", "/api/showtimes/**").hasRole("ADMIN")
 
                         // Authenticated endpoints - User operations
                         .requestMatchers("POST", "/api/bookings/book").authenticated()
                         .requestMatchers("GET", "/api/bookings/user/**").authenticated()
                         .requestMatchers("PUT", "/api/seats/*/availability").authenticated()
+
+                        // Admin endpoints - Booking management
+                        .requestMatchers("GET", "/api/bookings/all").hasRole("ADMIN")
+                        .requestMatchers("GET", "/api/bookings/**").hasRole("ADMIN")
+                        .requestMatchers("DELETE", "/api/bookings/**").hasRole("ADMIN")
+                        .requestMatchers("PUT", "/api/bookings/**").hasRole("ADMIN")
+
+                        // Admin endpoints - User management
+                        .requestMatchers("GET", "/api/users/all").hasRole("ADMIN")
+                        .requestMatchers("GET", "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("PUT", "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("DELETE", "/api/users/**").hasRole("ADMIN")
 
                         // Swagger/API Docs
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()

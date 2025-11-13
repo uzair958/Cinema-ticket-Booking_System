@@ -17,6 +17,7 @@ public class MovieController {
 
     @PostMapping("/add")
     public ResponseEntity<Movie> addMovie(@RequestBody Movie movie) {
+        System.out.println("🎬 Adding Movie: " + movie.getTitle());
         return ResponseEntity.ok(movieService.addMovie(movie));
     }
 
@@ -30,8 +31,21 @@ public class MovieController {
         return ResponseEntity.ok(movieService.searchByTitle(title));
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Movie> getMovieById(@PathVariable Long id) {
+        System.out.println("🎬 Fetching movie with ID: " + id);
+        return ResponseEntity.ok(movieService.getMovieById(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Movie> updateMovie(@PathVariable Long id, @RequestBody Movie movie) {
+        System.out.println("🎬 Updating Movie ID: " + id + " with title: " + movie.getTitle());
+        return ResponseEntity.ok(movieService.updateMovie(id, movie));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteMovie(@PathVariable Long id) {
+        System.out.println("🎬 Deleting Movie ID: " + id);
         movieService.deleteMovie(id);
         return ResponseEntity.ok("Movie deleted successfully");
     }
