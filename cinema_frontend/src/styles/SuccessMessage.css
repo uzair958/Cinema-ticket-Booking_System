@@ -1,0 +1,54 @@
+.success-message {
+  background-color: #efe;
+  border: 1px solid #cfc;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+  animation: slideIn 0.3s ease-in-out;
+}
+
+.success-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  position: relative;
+}
+
+.success-icon {
+  font-size: 20px;
+  flex-shrink: 0;
+  color: #3c3;
+}
+
+.success-message p {
+  margin: 0;
+  color: #3c3;
+  font-size: 14px;
+  flex: 1;
+}
+
+.success-close {
+  background: none;
+  border: none;
+  color: #3c3;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.success-close:hover {
+  color: #2a2;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+

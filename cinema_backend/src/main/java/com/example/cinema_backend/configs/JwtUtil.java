@@ -21,6 +21,16 @@ public class JwtUtil {
                 .sign(Algorithm.HMAC256(SECRET));
     }
 
+    public String generateToken(Long userId, String email, String role) {
+        return JWT.create()
+                .withSubject(email)
+                .withClaim("userId", userId)
+                .withClaim("role", role)
+                .withIssuedAt(new Date())
+                .withExpiresAt(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .sign(Algorithm.HMAC256(SECRET));
+    }
+
     public String extractEmail(String token) {
         return JWT.require(Algorithm.HMAC256(SECRET))
                 .build()
